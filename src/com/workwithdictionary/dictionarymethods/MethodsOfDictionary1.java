@@ -1,14 +1,20 @@
-package com.workwithdictionary.dictionarymethods1;
+package com.workwithdictionary.dictionarymethods;
 
 import com.workwithdictionary.moves.EndMoves;
 
 import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MethodsOfDictionary1 {
-    public File dict1 = new File("C:\\Users\\mart\\IdeaProjects\\Dictionary\\src\\resources", "Dictionary1.txt");
+
+
+    public File dict1 = new File(new File("src\\com\\resources\\Dictionary1.txt").getAbsolutePath());
     public HashMap<String, String> hashMap1 = new HashMap<String, String>();
 
     public void readDictionary1() {
@@ -39,18 +45,31 @@ public class MethodsOfDictionary1 {
             String key = sc.nextLine();
             System.out.println("Введите значение: ");
             String value = sc.nextLine();
-            hashMap1.put(key, value);
-            String str1 = new String();
-            for (Map.Entry<String, String> entry : hashMap1.entrySet()) {
-                str1 = entry.getKey() + ":" + entry.getValue();
+            boolean onlyLatin = value.matches("^[a-zA-Z]+$");
+            if (onlyLatin == true){
+                if(value.length() == 4){
+                    hashMap1.put(key, value);
+                    String str1 = new String();
+                    for (Map.Entry<String, String> entry : hashMap1.entrySet()) {
+                        str1 = entry.getKey() + ":" + entry.getValue();
+                    }
+                    FileWriter fw1 = new FileWriter(dict1, true);
+                    BufferedWriter pw1 = new BufferedWriter(fw1);
+                    pw1.write(str1 + "\n");
+                    pw1.close();
+                    System.out.println("Теперь словарь содержит: ");
+                    mOD11.readDictionary1();
+                    eM.eMoves();
+                }
+                else{
+                    System.out.println("Ошибка: Значение превышает допускаемую длину!");
+                    eM.eMoves();
+                }
             }
-            FileWriter fw1 = new FileWriter(dict1, true);
-            BufferedWriter pw1 = new BufferedWriter(fw1);
-            pw1.write( str1 + "\n");
-            pw1.close();
-            System.out.println("Теперь словарь содержит: ");
-            mOD11.readDictionary1();
-            eM.eMoves();
+            else{
+                System.out.println("Ошибка: Символы, кроме латинских недопустимы!");
+                eM.eMoves();
+            }
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println(e);
@@ -82,10 +101,10 @@ public class MethodsOfDictionary1 {
             System.out.println("Введите ключ удаляемой записи: ");
             Scanner in1 = new Scanner(System.in);
             hashMap1.remove(in1.nextLine());
-            try{
+            try {
                 FileWriter fileW1 = new FileWriter(dict1);
                 BufferedWriter buffW1 = new BufferedWriter(fileW1);
-                for(Map.Entry<String, String> entry : hashMap1.entrySet()){
+                for (Map.Entry<String, String> entry : hashMap1.entrySet()) {
                     fileW1.write(entry.getKey() + ":" + entry.getValue() + "\n");
                 }
                 fileW1.close();
@@ -106,5 +125,32 @@ public class MethodsOfDictionary1 {
             e.printStackTrace();
             System.out.println(e);
         }
+    }
+
+    public void findValue(){
+        EndMoves eM = new EndMoves();
+        try {
+            String line;
+            BufferedReader reader = new BufferedReader(new FileReader(dict1));
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(":", 2);
+                if (parts.length >= 2) {
+                    String key = parts[0];
+                    String value = parts[1];
+                    hashMap1.put(key, value);
+                } else {
+                    System.out.println("ignoring line: " + line);
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Введите ключ искомой записи:");
+        Scanner in = new Scanner(System.in);
+        String key = in.nextLine();
+        System.out.println(hashMap1.get(key));
+        eM.eMoves();
     }
 }

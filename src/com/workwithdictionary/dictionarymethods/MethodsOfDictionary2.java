@@ -1,4 +1,4 @@
-package com.workwithdictionary.dictionarymethods2;
+package com.workwithdictionary.dictionarymethods;
 import com.workwithdictionary.moves.EndMoves;
 
 import java.io.*;
@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class MethodsOfDictionary2 {
-    public File dict2 = new File("C:\\Users\\mart\\IdeaProjects\\Dictionary\\src\\resources", "Dictionary2.txt");
+    public File dict2 = new File(new File("src\\com\\resources\\Dictionary2.txt").getAbsolutePath());
     public HashMap<String, String> hashMap2 = new HashMap<String, String>();
 
     public void readDictionary2(){
@@ -36,18 +36,31 @@ public class MethodsOfDictionary2 {
             String key = sc2.nextLine();
             System.out.println("Введите значение: ");
             String value = sc2.nextLine();
-            hashMap2.put(key, value);
-            String str2 = new String();
-            for (Map.Entry<String, String> entry : hashMap2.entrySet()) {
-                str2 = entry.getKey() + ":" + entry.getValue();
+            boolean onlyNumbers = value.matches("^[0-9]+$");
+            if(onlyNumbers == true){
+                if (value.length() == 5){
+                    hashMap2.put(key, value);
+                    String str2 = new String();
+                    for (Map.Entry<String, String> entry : hashMap2.entrySet()) {
+                        str2 = entry.getKey() + ":" + entry.getValue();
+                    }
+                    FileWriter fw2 = new FileWriter(dict2, true);
+                    BufferedWriter pw2 = new BufferedWriter(fw2);
+                    pw2.write( str2 + "\n");
+                    pw2.close();
+                    System.out.println("Теперь словарь содержит: ");
+                    mOD12.readDictionary2();
+                    eM.eMoves2();
+                }
+                else{
+                    System.out.println("Ошибка: Значение превышает допускаемую длину!");
+                    eM.eMoves2();
+                }
             }
-            FileWriter fw2 = new FileWriter(dict2, true);
-            BufferedWriter pw2 = new BufferedWriter(fw2);
-            pw2.write( str2 + "\n");
-            pw2.close();
-            System.out.println("Теперь словарь содержит: ");
-            mOD12.readDictionary2();
-            eM.eMoves2();
+            else{
+                System.out.println("Ошибка: Доступен ввод только числовых значений!");
+                eM.eMoves2();
+            }
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println(e);
@@ -102,5 +115,31 @@ public class MethodsOfDictionary2 {
             e.printStackTrace();
             System.out.println(e);
         }
+    }
+    public void findValue2(){
+        EndMoves eM = new EndMoves();
+        try {
+            String line;
+            BufferedReader reader = new BufferedReader(new FileReader(dict2));
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(":", 2);
+                if (parts.length >= 2) {
+                    String key = parts[0];
+                    String value = parts[1];
+                    hashMap2.put(key, value);
+                } else {
+                    System.out.println("ignoring line: " + line);
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Введите ключ искомой записи:");
+        Scanner in = new Scanner(System.in);
+        String key = in.nextLine();
+        System.out.println(hashMap2.get(key));
+        eM.eMoves2();
     }
 }

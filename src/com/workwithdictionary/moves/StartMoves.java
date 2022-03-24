@@ -1,5 +1,4 @@
 package com.workwithdictionary.moves;
-import com.workwithdictionary.dictionarymethods1.MethodsOfDictionary1;
 import com.workwithdictionary.showalldictionary.ShowAll;
 
 import java.util.Scanner;
